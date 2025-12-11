@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const Product = require('../models/Product'); // Needed to populate details
+const Product = require('../models/Product'); 
 
-// Middleware to ensure they are a customer
+// to ensure they are a customer
 const requireCustomer = (req, res, next) => {
     if (!req.session.userId) {
         return res.redirect('/login');
@@ -21,7 +21,7 @@ router.get('/', requireCustomer, async (req, res) => {
     try {
         const user = await User.findById(req.session.userId).populate('cart.productId');
         
-        // Filter out null products (in case a product was deleted from inventory but is still in a cart)
+        // Filter out null products just in case a product was deleted from inventory but is still in a cart
         const validCart = user.cart.filter(item => item.productId !== null);
 
         // Calculate Grand Total
@@ -46,9 +46,7 @@ router.get('/', requireCustomer, async (req, res) => {
 // POST /cart/add - Add Item (Used by Footer Script)
 // ---------------------------------------------------------
 router.post('/add', async (req, res) => {
-    // ... (Keep your existing code for this route exactly as we wrote it before) ...
-    // COPY PASTE THE PREVIOUS '/add' CODE HERE
-    // (If you lost it, I can provide it again, but simpler to just keep it)
+
     try {
         const productId = req.body.productId;
         if (!req.session.userId) return res.json({ status: 'guest', message: "Please log in to shop." });
@@ -83,7 +81,6 @@ router.post('/update', requireCustomer, async (req, res) => {
                 user.cart[itemIndex].quantity += 1;
             } else if (action === 'decrease') {
                 user.cart[itemIndex].quantity -= 1;
-                // If quantity drops to 0, remove it
                 if (user.cart[itemIndex].quantity <= 0) {
                     user.cart.splice(itemIndex, 1);
                 }
