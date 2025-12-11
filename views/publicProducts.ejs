@@ -1,0 +1,160 @@
+<%- include("partials/header", { active: "products", title: "Retail Shop | Products" }) %>
+
+<main class="container py-5">
+
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <h2 class="fw-bold mb-1">Products</h2>
+      <p class="text-muted mb-0">Browse all items in the smart retail catalog.</p>
+    </div>
+
+    <div class="text-end">
+      <span class="badge rounded-pill bg-primary-soft me-2">
+        Total products: <strong><%= totalProducts %></strong>
+      </span>
+      <% const hasActiveFilter = Object.keys(query).length > 0; %>
+      
+      <button class="btn btn-outline-primary d-inline-flex align-items-center gap-1"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#filterCollapse"
+              aria-expanded="<%= hasActiveFilter ? 'true' : 'false' %>"
+              aria-controls="filterCollapse">
+         ⚙️ <span>Search & Filters</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="collapse <%= hasActiveFilter ? 'show' : '' %> mb-4" id="filterCollapse">
+    <div class="card card-body p-4 border-0 shadow-sm bg-light">
+      <form action="/shop" method="GET" class="row g-3">
+
+        <div class="col-12">
+            <label for="search" class="form-label small fw-bold mb-1">Search Products</label>
+            <div class="input-group">
+                <span class="input-group-text bg-white">🔍</span>
+                <input type="text" class="form-control" id="search" name="search" 
+                       placeholder="Type a product name (e.g. Game)..." 
+                       value="<%= query.search || '' %>">
+            </div>
+        </div>
+
+        <div class="col-md-3">
+          <label for="sortDropdown" class="form-label small fw-bold mb-1">Sort By</label>
+          <select class="form-select form-select-sm" id="sortDropdown">
+            <option value="">-- Default Order --</option>
+            <option value="product-name" <%= query.sortBy === 'product-name' ? 'selected' : '' %>>Product Name</option>
+            <option value="price" <%= query.sortBy === 'price' ? 'selected' : '' %>>Price</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <label for="sortOrder" class="form-label small fw-bold mb-1">Order</label>
+          <select class="form-select form-select-sm" id="sortOrder" name="sortOrder">
+            <option value="asc" <%= query.sortOrder === 'asc' ? 'selected' : '' %>>Ascending (A-Z/Low)</option>
+            <option value="desc" <%= query.sortOrder === 'desc' ? 'selected' : '' %>>Descending (Z-A/High)</option>
+          </select>
+          <input type="hidden" name="sortBy" value="<%= query.sortBy || '' %>">
+        </div>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sortDropdown = document.getElementById('sortDropdown');
+            const hiddenSortBy = document.querySelector('input[name="sortBy"]');
+            
+            const updateSortFields = () => {
+                hiddenSortBy.value = sortDropdown.value;
+            };
+            if (!hiddenSortBy.value && sortDropdown.value) {
+                hiddenSortBy.value = sortDropdown.value;
+            }
+            sortDropdown.addEventListener('change', updateSortFields);
+        });
+        </script>
+
+        <div class="col-md-3">
+          <label for="category" class="form-label small fw-bold mb-1">Category</label>
+          <select class="form-select form-select-sm" id="category" name="category">
+            <option value="">-- All Categories --</option>
+            <% categories.forEach(val => { %>
+              <option value="<%= val %>" <%= query.category === val ? 'selected' : '' %>>
+                 <%= val %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+             <label class="form-label small fw-bold mb-1 d-block">Tags (Must include ALL selected)</label>
+             <div class="d-flex flex-wrap gap-2 p-2 border rounded bg-white" style="max-height: 80px; overflow-y: auto;">
+                <% tagsList.forEach(val => { %>
+                  <div class="form-check form-check-inline mb-0">
+                    <% const isTagSelected = (Array.isArray(query.tags) && query.tags.includes(val)) || (query.tags === val); %>
+                    <input class="form-check-input" type="checkbox" id="tag-<%= val %>" name="tags" value="<%= val %>" <%= isTagSelected ? 'checked' : '' %>>
+                    <label class="form-check-label small" for="tag-<%= val %>"><%= val %></label>
+                  </div>
+                <% }) %>
+             </div>
+        </div>
+
+        <div class="col-md-12 d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+             <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="on" id="is_in_stock" name="is_in_stock" <%= query.is_in_stock === 'on' ? 'checked' : '' %>>
+                <label class="form-check-label small" for="is_in_stock">In Stock Only</label>
+             </div>
+
+             <div class="d-flex gap-2">
+                <a href="/shop" class="btn btn-outline-secondary btn-sm">Clear All</a>
+                <button type="submit" class="btn btn-primary btn-sm px-4">Apply Search & Filters</button>
+             </div>
+        </div>
+        
+      </form>
+    </div>
+  </div>
+
+
+  <div class="product-list">
+    <% if (products.length === 0 && hasActiveFilter) { %>
+      <div class="alert alert-warning text-center" role="alert">
+        No products match your search or filters.
+      </div>
+    <% } %>
+    
+    <% products.forEach(p => { %>
+      <div class="product-row product-card">
+        <div class="product-main">
+          <h5 class="fw-semibold mb-1"><%= p.product_name %></h5>
+          <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+            <% if (p.category) { %>
+              <span class="badge bg-info text-dark"><%= p.category %></span>
+            <% } %>
+            <% if (p.price !== undefined) { %>
+              <span class="text-muted small">$<%= p.price.toFixed(2) %></span>
+            <% } %>
+            <% if (typeof p.is_in_stock !== "undefined") { %>
+              <span class="small <%= p.is_in_stock ? 'text-success' : 'text-danger' %>">
+                <%= p.is_in_stock ? 'In Stock' : 'Out of Stock' %>
+              </span>
+            <% } %>
+          </div>
+          <% if (p.tags && p.tags.length > 0) { %>
+            <div class="d-flex flex-wrap gap-1 mt-1">
+              <% p.tags.forEach(tag => { %>
+                <span class="badge bg-secondary-soft text-secondary small"><%= tag %></span>
+              <% }) %>
+            </div>
+          <% } %>
+        </div>
+
+        <div class="product-actions d-flex flex-wrap gap-2">
+          <a href="/shop/<%= p._id %>" class="btn btn-outline-primary btn-sm">View Details</a>
+          <button type="button" class="btn btn-add-cart btn-sm" data-id="<%= p._id %>">Add to Cart</button>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+
+</main>
+
+<%- include("partials/footer") %>

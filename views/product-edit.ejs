@@ -1,0 +1,91 @@
+<%- include("partials/header") %>
+<%- include("partials/navbar") %>
+
+<div class="container mt-4">
+  <h1><%= title %></h1>
+
+  <form action="/products/<%= product._id %>?_method=PUT" method="POST">
+    <div class="mb-3">
+      <label class="form-label">Product Name</label>
+      <input type="text" name="product_name" class="form-control"
+             value="<%= product.product_name %>" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Category</label>
+      <input type="text" name="category" class="form-control"
+             value="<%= product.category %>" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Brand</label>
+      <input type="text" name="brand" class="form-control"
+             value="<%= product.brand %>">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Price</label>
+      <input type="number" name="price" step="0.01" class="form-control"
+             value="<%= product.price %>" required>
+    </div>
+
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" name="is_in_stock" id="is_in_stock"
+             <%= product.is_in_stock ? "checked" : "" %> >
+      <label class="form-check-label" for="is_in_stock">
+        In Stock
+      </label>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Image URL</label>
+      <input type="text" name="image_url" class="form-control"
+             value="<%= product.image_url %>">
+    </div>
+
+    <h5>Location</h5>
+    <div class="mb-3">
+      <label class="form-label">City</label>
+      <input type="text" name="location[city]" class="form-control"
+             value="<%= product.location ? product.location.city : '' %>">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">State</label>
+      <input type="text" name="location[state]" class="form-control"
+             value="<%= product.location ? product.location.state : '' %>">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Country</label>
+      <input type="text" name="location[country]" class="form-control"
+             value="<%= product.location ? product.location.country : '' %>">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Tags (comma separated)</label>
+      <input type="text" name="tags" class="form-control"
+             value="<%= (product.tags || []).join(', ') %>">
+    </div>
+
+    <h5>Product Details</h5>
+    <div class="mb-3">
+      <label class="form-label">Dimensions</label>
+      <input type="text" name="productDetails[dimensions]" class="form-control"
+             value="<%= product.productDetails ? product.productDetails.dimensions : '' %>">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Material</label>
+      <input type="text" name="productDetails[material]" class="form-control"
+             value="<%= product.productDetails ? product.productDetails.material : '' %>">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Warranty</label>
+      <input type="text" name="productDetails[warranty]" class="form-control"
+             value="<%= product.productDetails ? product.productDetails.warranty : '' %>">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a href="/products" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+
+<%- include("partials/footer") %>

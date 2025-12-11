@@ -1,0 +1,101 @@
+<footer class="text-center text-muted py-4 mt-5">
+    © 2025 Retail Shop | Humber College
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // ---------- SEARCH OVERLAY LOGIC (Kept safe) ----------
+  const searchOverlay = document.getElementById("searchOverlay");
+  const openSearchBtn = document.getElementById("openSearchBtn");
+  const closeSearchBtn = document.getElementById("closeSearchBtn");
+  const searchInput = document.getElementById("searchInput");
+
+  function openSearchOverlay() {
+    if (!searchOverlay) return;
+    searchOverlay.classList.add("show");
+    setTimeout(() => searchInput && searchInput.focus(), 150);
+  }
+
+  function closeSearchOverlay(reset = true) {
+    if (!searchOverlay) return;
+    searchOverlay.classList.remove("show");
+    if (reset && searchInput) {
+      searchInput.value = "";
+      // Optional: Reset filter if you have a live filter function
+    }
+  }
+
+  if (openSearchBtn) openSearchBtn.addEventListener("click", openSearchOverlay);
+  if (closeSearchBtn) closeSearchBtn.addEventListener("click", () => closeSearchOverlay(true));
+  if (searchOverlay) {
+    searchOverlay.addEventListener("click", (e) => {
+      if (e.target === searchOverlay) closeSearchOverlay(true);
+    });
+  }
+
+
+  // ---------- REAL SHOPPING CART LOGIC (Database Connected) ----------
+  
+  // 1. On Page Load: Ask server "How many items do I have?"
+  // (We will implement the route for this in the next step to keep the number accurate on refresh)
+  
+  // 2. Handle "Add to Cart" Clicks
+  document.addEventListener("click", async (e) => {
+    // Check if the clicked element (or its parent) is the add button
+    if (e.target.matches(".btn-add-cart")) {
+        const btn = e.target;
+        const productId = btn.getAttribute("data-id");
+
+        try {
+            // Send the Product ID to your Backend Route
+            const response = await fetch('/cart/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ productId: productId })
+            });
+
+            const result = await response.json();
+
+            // --- SCENARIO 1: GUEST (Not Logged In) ---
+            if (result.status === 'guest') {
+                // Ask them to login
+                if (confirm(result.message + "\n\nClick OK to go to the Login page.")) {
+                    window.location.href = '/login';
+                }
+            }
+            
+            // --- SCENARIO 2: ADMIN (Restricted) ---
+            else if (result.status === 'admin') {
+                alert(result.message); // "Admins cannot shop..."
+            }
+
+            // --- SCENARIO 3: CUSTOMER (Success) ---
+            else if (result.status === 'success') {
+                // A. Update the red badge number immediately
+                const badge = document.getElementById("cartCount");
+                if (badge) badge.innerText = result.cartCount;
+
+                // B. Visual Feedback: Change button text temporarily
+                const originalText = btn.innerText;
+                btn.innerText = "Added! ✔";
+                btn.classList.remove("btn-primary", "btn-outline-primary"); // Remove old colors
+                btn.classList.add("btn-success"); // Make it green
+                
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.classList.remove("btn-success");
+                    btn.classList.add("btn-add-cart"); // Reset class if needed
+                }, 1000);
+            }
+
+        } catch (err) {
+            console.error("Error adding to cart:", err);
+            alert("Something went wrong. Please try again.");
+        }
+    }
+  });
+</script>
+
+</body>
+</html>

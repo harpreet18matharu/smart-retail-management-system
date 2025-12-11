@@ -1,0 +1,72 @@
+<%- include('partials/header', { title: 'User Database', active: 'dashboard' }) %>
+
+<div class="container mt-5">
+    <h2 class="mb-4">User Database Registry (Dev Tool)</h2>
+    
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Dev Password (Visible)</th>
+                            <th>User ID</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (users.length > 0) { %>
+                            <% users.forEach(function(user) { %>
+                                <tr>
+                                    <td class="fw-bold"><%= user.username %></td>
+                                    
+                                    <td>
+                                        <% if (user.role === 'admin') { %>
+                                            <span class="badge bg-danger">Admin</span>
+                                        <% } else { %>
+                                            <span class="badge bg-primary">Customer</span>
+                                        <% } %>
+                                    </td>
+                                    
+                                    <td style="font-family: monospace; color: #d9534f; font-weight: bold;">
+                                        <%= user.secretCopy ? user.secretCopy : "Hidden (Old User)" %>
+                                    </td>
+                                    
+                                    <td class="text-muted"><small><%= user._id %></small></td>
+
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <a href="/admin/users/<%= user._id %>/edit" class="btn btn-sm btn-warning">
+                                                Edit
+                                            </a>
+
+                                            <form action="/admin/users/<%= user._id %>?_method=DELETE" method="POST" 
+                                                  onsubmit="return confirm('Are you sure you want to delete <%= user.username %>?');">
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="5" class="text-center">No users found in database.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a href="/admin/signup" class="btn btn-success">Create New User manually</a>
+        <a href="/dashboard" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

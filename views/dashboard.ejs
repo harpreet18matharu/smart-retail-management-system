@@ -1,0 +1,97 @@
+<%- include("partials/header", { active: "dashboard", title: "Retail Shop | Dashboard" }) %>
+
+<main class="container py-5">
+  <h2 class="fw-bold mb-4">Dashboard</h2>
+
+  <div class="row g-4 mb-4">
+    <div class="col-md-3">
+      <div class="card stat-card shadow-sm">
+        <div class="card-body">
+          <p class="stat-label">Total Products</p>
+          <p class="stat-value"><%= stats.totalProducts %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card stat-card shadow-sm">
+        <div class="card-body">
+          <p class="stat-label">Unique Categories</p>
+          <p class="stat-value"><%= stats.uniqueCategories %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card stat-card shadow-sm">
+        <div class="card-body">
+          <p class="stat-label">Out of Stock</p>
+          <p class="stat-value"><%= stats.outOfStock %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card stat-card shadow-sm">
+        <div class="card-body">
+          <p class="stat-label">Average Price</p>
+          <p class="stat-value">$<%= stats.avgPrice.toFixed(2) %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h5 class="mb-3">Recent Products</h5>
+  <div class="table-responsive glass-table rounded-4 shadow-sm">
+    <table class="table align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+  <% products.slice(0, 10).forEach(p => { %>
+    <tr>
+      <!-- NAME: product_name with link -->
+      <td>
+        <a href="/products/<%= p._id %>">
+          <%= p.product_name %>
+        </a>
+      </td>
+
+      <!-- CATEGORY -->
+      <td><%= p.category || '-' %></td>
+
+      <!-- PRICE -->
+      <td>
+        <% if (p.price !== undefined) { %>
+          $<%= p.price.toFixed(2) %>
+        <% } else { %>
+          -
+        <% } %>
+      </td>
+
+      <!-- STOCK / IN STOCK FLAG -->
+      <td>
+        <% if (typeof p.is_in_stock !== "undefined") { %>
+          <span class="<%= p.is_in_stock ? 'text-success' : 'text-danger' %>">
+            <%= p.is_in_stock ? 'In Stock' : 'Out of Stock' %>
+          </span>
+        <% } else if (typeof p.stock !== "undefined") { %>
+          <%= p.stock %>
+        <% } else { %>
+          -
+        <% } %>
+      </td>
+    </tr>
+  <% }) %>
+</tbody>
+
+    </table>
+  </div>
+</main>
+
+<%- include("partials/footer") %>

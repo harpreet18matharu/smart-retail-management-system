@@ -1,0 +1,141 @@
+:root {
+  --blue: #3b82f6;
+  --sea-green: #22c5b9;
+  --soft-pink: #f472b6;
+  --bg: #eef4ff;
+}
+
+.app-body {
+  background: radial-gradient(circle at top left, #e0f2fe, #fdf2ff);
+  min-height: 100vh;
+  font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* NAVBAR */
+.glass-nav {
+  background: linear-gradient(90deg, var(--blue), var(--sea-green), var(--soft-pink));
+  color: white;
+}
+.glass-nav .navbar-brand,
+.glass-nav .nav-link {
+  color: #fefefe !important;
+}
+.glass-nav .nav-link.active {
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* HERO */
+.hero-card {
+  background: linear-gradient(135deg, var(--blue), var(--sea-green), var(--soft-pink));
+  color: white;
+}
+
+/* PRODUCT CARDS */
+.product-card {
+  border-radius: 16px;
+  border: none;
+  background: white;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.product-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 15px 35px rgba(15, 23, 42, 0.12);
+}
+
+.price-tag {
+  font-weight: 600;
+  color: var(--blue);
+}
+
+/* SEARCH OVERLAY */
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 1050;
+}
+.search-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.search-box {
+  background: white;
+  max-width: 500px;
+  width: 90%;
+  animation: popIn 0.25s ease;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.9) translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* CART BADGE */
+.cart-wrapper {
+  position: relative;
+}
+.cart-icon {
+  font-size: 1.4rem;
+}
+.cart-count-badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: var(--soft-pink);
+  color: white;
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-size: 0.7rem;
+}
+/* PRODUCT LIST VIEW */
+.product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.product-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+.product-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-actions {
+  display: flex;
+  align-items: center;
+}
+
+/* Responsive: stack actions below name on small screens */
+@media (max-width: 768px) {
+  .product-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .product-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

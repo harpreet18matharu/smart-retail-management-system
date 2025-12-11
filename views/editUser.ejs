@@ -1,0 +1,38 @@
+<%- include('partials/header', { title: 'Edit User', active: 'dashboard' }) %>
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px; border-radius: 15px;">
+        <div class="card-body">
+            <h3 class="text-center mb-4 fw-bold">Edit User</h3>
+            
+            <form action="/admin/users/<%= user._id %>?_method=PUT" method="POST">
+                
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" value="<%= user.username %>" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="role" class="form-label">Role</label>
+                    <select name="role" class="form-select">
+                        <option value="customer" <%= user.role === 'customer' ? 'selected' : '' %>>Customer</option>
+                        <option value="admin" <%= user.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label">New Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="Leave blank to keep current password">
+                    <div class="form-text">Only type here if you want to change it.</div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Update User</button>
+                    <a href="/admin/users" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,65 @@
+<%- include("partials/header", { active: "home", title: "Retail Shop | Home" }) %>
+
+<main class="container py-5">
+  <section class="hero-card p-5 rounded-4 shadow-lg mb-5">
+    <h1 class="fw-bold mb-3">
+      <% if (user) { %>
+        Welcome <%= user.username %> to Retail Shop
+      <% } else { %>
+        Welcome to Retail Shop
+      <% } %>
+    </h1>
+    <p class="lead mb-4">
+      Transforming retail operations with real-time insights and effortless product management.
+    </p>
+    <!-- made it so the buttons are dynamic to who is viewing -->
+    <div class="d-flex gap-3 flex-wrap">
+      <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+        <a href="/shop" class="btn btn-light btn-lg">Customer Shop View</a>
+        <a href="/products" class="btn btn-outline-light btn-lg">Inventory (Admin)</a>
+        <a href="/dashboard" class="btn btn-outline-light btn-lg">View Dashboard</a>
+      <% } else { %>
+        <a href="/shop" class="btn btn-light btn-lg">Browse Products</a>
+      <% } %>
+    </div>
+  </section>
+
+  <h4 class="mb-3">Featured Products</h4>
+  <p class="text-muted mb-4">A quick look at some items from the catalog.</p>
+
+  <div class="row">
+    <% (locals.products || []).slice(0,4).forEach(p => { %>
+      <div class="col-md-3 mb-4">
+        <div class="card shadow-sm product-card" data-name="<%= p.name %>">
+          
+          <div class="card-body">
+  <h5 class="fw-semibold mb-2"><%= p.product_name %></h5>
+
+  <% if (p.category) { %>
+    <span class="badge bg-info text-dark mb-2"><%= p.category %></span>
+  <% } %>
+
+  <a href="/shop/<%= p._id %>" class="btn btn-outline-primary btn-sm mt-3">
+    View Details
+  </a>
+</div>
+
+
+        </div>
+      </div>
+    <% }) %>
+  </div>
+
+
+  <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+    <div class="text-center mt-5 pt-4 border-top">
+      <p class="text-muted small mb-2">Developer Tools</p>
+      <a href="/admin/users" class="btn btn-sm btn-secondary">
+        User Registry & Management
+      </a>
+    </div>
+  <% } %>
+
+</main>
+
+<%- include("partials/footer") %>
